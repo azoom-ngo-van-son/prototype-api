@@ -1,0 +1,45 @@
+steps:
+  - id: 'build'
+    name: gcr.io/cloud-builders/docker
+    args:
+      [
+        'build',
+        '-f',
+        '${_DOCKER_FILE}',
+        '--cache-from',
+        'gcr.io/$PROJECT_ID/${_CLOUD_RUN_SERVICE_NAME}:latest',
+        '-t',
+        'gcr.io/$PROJECT_ID/${_CLOUD_RUN_SERVICE_NAME}:latest',
+        '${_ROOT_FOLDER}',
+      ]
+  - id: 'push'
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        docker push gcr.io/$PROJECT_ID/${_CLOUD_RUN_SERVICE_NAME}:latest
+  - id: 'deploy'
+    name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      [
+        'run',
+        'deploy',
+        '${_CLOUD_RUN_SERVICE_NAME}',
+        '--image',
+        'gcr.io/$PROJECT_ID/${_CLOUD_RUN_SERVICE_NAME}:latest',
+        '--no-allow-unauthenticated',
+        '--region',
+        '${_CLOUD_RUN_REGION}',
+        '--platform',
+        'managed',
+        '--port',
+        '8080',
+        '--timeout',
+        '900'
+      ]
+substitutions:
+  _DOCKER_FILE: ./cicd/production/Dockerfile
+  _ROOT_FOLDER: ./
+  _CLOUD_RUN_SERVICE_NAME: azoom-n-v-son-prototype-api
+  _CLOUD_RUN_REGION: 'asia-northeast1'
