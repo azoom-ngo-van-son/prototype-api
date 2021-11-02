@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 
 app.get("/", (req, res) => {
-  const name = 'Son Ngo';
+  const name = 'Son Ngo Van';
   res.send(`Hello ${name}!`);
 });
 
