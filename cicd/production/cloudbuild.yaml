@@ -7,9 +7,9 @@ steps:
         '-f',
         '${_DOCKER_FILE}',
         '--cache-from',
-        'gcr.io/$PROJECT_ID/${_CLOUD_RUN_SERVICE_NAME}:latest',
+        'gcr.io/$PROJECT_ID/${_CLOUD_RUN_SERVICE_NAME}:$TAG_NAME',
         '-t',
-        'gcr.io/$PROJECT_ID/${_CLOUD_RUN_SERVICE_NAME}:latest',
+        'gcr.io/$PROJECT_ID/${_CLOUD_RUN_SERVICE_NAME}:$TAG_NAME',
         '${_ROOT_FOLDER}',
       ]
   - id: 'push'
@@ -18,7 +18,7 @@ steps:
     args:
       - '-c'
       - |
-        docker push gcr.io/$PROJECT_ID/${_CLOUD_RUN_SERVICE_NAME}:latest
+        docker push gcr.io/$PROJECT_ID/${_CLOUD_RUN_SERVICE_NAME}:$TAG_NAME
   - id: 'deploy'
     name: 'gcr.io/cloud-builders/gcloud'
     args:
@@ -27,7 +27,7 @@ steps:
         'deploy',
         '${_CLOUD_RUN_SERVICE_NAME}',
         '--image',
-        'gcr.io/$PROJECT_ID/${_CLOUD_RUN_SERVICE_NAME}:latest',
+        'gcr.io/$PROJECT_ID/${_CLOUD_RUN_SERVICE_NAME}:$TAG_NAME',
         '--no-allow-unauthenticated',
         '--region',
         '${_CLOUD_RUN_REGION}',
